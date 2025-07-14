@@ -1,4 +1,5 @@
 require('dotenv').config();
+const http = require('http');
 const {Telegraf} = require('telegraf');
 const {getAnswer} = require('./api');
 
@@ -23,3 +24,20 @@ bot.command('askdeep', async(ctx) => {
   }
 });
 bot.launch();
+
+const server = http.createServer((req, res) => {
+  if (req.method === 'GET' && req.url === '/') {
+    const response = { message: 'the server is online' };
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(response));
+  } else {
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Not found' }));
+  }
+});
+
+const PORT = 3000;
+server.listen(PORT, () => {
+  console.log(`Server is running on: ${PORT}`);
+});
